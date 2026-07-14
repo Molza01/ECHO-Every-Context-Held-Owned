@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Virtual envs
+backend/.venv/
+.venv/
+venv/
+
+# Secrets / local state
+backend/.env
+.env
+backend/.contextos/
+*.log
