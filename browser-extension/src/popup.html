@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        margin: 0;
+        width: 280px;
+        font-family: "Inter", system-ui, sans-serif;
+        background: #0b0d12;
+        color: #e7eaf0;
+      }
+      .wrap { padding: 14px; }
+      .row { display: flex; align-items: center; gap: 8px; }
+      .title { font-weight: 700; font-size: 15px; }
+      .sub { color: #8b93a7; font-size: 11px; }
+      .dot { width: 8px; height: 8px; border-radius: 50%; }
+      .card { background: #12151d; border: 1px solid #232838; border-radius: 10px; padding: 10px; margin-top: 10px; }
+      button {
+        width: 100%; margin-top: 10px; padding: 9px; border: none; border-radius: 8px;
+        background: #6476ed; color: white; font-weight: 600; font-size: 13px; cursor: pointer;
+      }
+      button.ghost { background: #171b26; color: #e7eaf0; border: 1px solid #232838; }
+      label { display: flex; align-items: center; justify-content: space-between; font-size: 13px; margin-top: 10px; }
+      code { font-family: "JetBrains Mono", monospace; font-size: 11px; color: #8b93a7; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="row" style="justify-content: space-between">
+        <span class="title">ContextOS</span>
+        <span class="row"><span id="dot" class="dot"></span><span id="state" class="sub"></span></span>
+      </div>
+      <div class="card">
+        <div class="sub">Current page</div>
+        <div id="page" style="font-size: 13px; margin-top: 3px; word-break: break-word"></div>
+      </div>
+      <button id="remember">Remember this page</button>
+      <button id="panel" class="ghost">Open ambient panel</button>
+      <label>
+        <span>Auto-capture page context</span>
+        <input type="checkbox" id="toggle" />
+      </label>
+      <div style="margin-top: 10px"><code id="backend">127.0.0.1:8765</code></div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "ContextOS",
+  "version": "0.1.0",
+  "description": "Ambient browser memory for ContextOS — captures page context (title/URL/domain) and lets you explicitly remember pages and selections.",
+  "permissions": ["tabs", "activeTab", "contextMenus", "sidePanel", "storage", "scripting"],
+  "host_permissions": ["http://127.0.0.1:8765/*", "http://localhost:8765/*"],
+  "background": { "service_worker": "src/background.js" },
+  "side_panel": { "default_path": "src/sidepanel.html" },
+  "action": {
+    "default_popup": "src/popup.html",
+    "default_title": "ContextOS"
+  },
+  "icons": { "128": "src/icon.png" }
+}
