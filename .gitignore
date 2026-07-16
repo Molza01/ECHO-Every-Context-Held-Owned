@@ -1,21 +1,44 @@
+# Secrets / env
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
 # Python
 __pycache__/
 *.py[cod]
-*.egg-info/
-
-# Virtual envs
-backend/.venv/
 .venv/
 venv/
+env/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-# Secrets / local state
-backend/.env
-.env
+# Node / frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+.vite/
+
+# Browser extension build
+browser-extension/dist/
+
+# ContextOS local state (persistent user id, cached metadata)
 backend/.contextos/
 *.log
 
-# Node 
-node_modules/
-dist/
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Never commit anything from the separate supermemory-local install
+supermemory-local/
+
+# TS build cache
 *.tsbuildinfo
-.env
