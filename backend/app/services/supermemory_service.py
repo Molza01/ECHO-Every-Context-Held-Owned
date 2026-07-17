@@ -57,11 +57,30 @@ class SupermemoryService:
 
     # ---- health -----------------------------------------------------------------------
     async def health(self) -> dict[str, Any]:
+        """Report reachability for BOTH deployments:
+        - Supermemory Local exposes GET /v3/health.
+        - Supermemory Cloud may not, so fall back to a tiny authenticated list call.
+        """
+        # 1) local server health endpoint
         try:
             resp = await self._client.get("/v3/health", timeout=5.0)
-            ok = resp.status_code == 200
-            body = resp.json() if ok else {}
-            return {"reachable": ok, "base_url": self.base_url, "status": body.get("status")}
+            if resp.status_code == 200:
+                body = resp.json()
+                mode = "cloud" if "supermemory.ai" in self.base_url else "local"
+                return {"reachable": True, "base_url": self.base_url,
+                        "status": body.get("status", "ok"), "mode": mode}
+        except Exception:  # noqa: BLE001
+            pass
+        # 2) fallback: a lightweight authenticated request (works on the hosted platform)
+        try:
+            resp = await self._client.post(
+                "/v3/documents/list",
+                json={"containerTags": container_tags(), "limit": 1},
+                timeout=8.0,
+            )
+            if resp.status_code == 200:
+                return {"reachable": True, "base_url": self.base_url, "status": "ok", "mode": "cloud"}
+            return {"reachable": False, "base_url": self.base_url, "error": f"HTTP {resp.status_code}"}
         except Exception as exc:  # noqa: BLE001 - health must never raise
             return {"reachable": False, "base_url": self.base_url, "error": str(exc)}
 

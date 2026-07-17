@@ -4,8 +4,9 @@ from __future__ import annotations
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.api.routes import router
 from app.api.websocket import manager
@@ -30,15 +31,37 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="ContextOS", version="0.1.0", lifespan=lifespan)
 
+
+class PrivateNetworkMiddleware(BaseHTTPMiddleware):
+    """Allow an HTTPS site (e.g. the Vercel-hosted ECHO UI) to call this backend on the
+    user's OWN machine at http://localhost:8765. Chrome/Edge require the server to answer
+    the Private Network Access preflight with this header, or the request is blocked.
+    """
+
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        if request.headers.get("access-control-request-private-network") == "true":
+            response.headers["Access-Control-Allow-Private-Network"] = "true"
+        return response
+
+
 settings = get_settings()
+# Allow: local dev, browser extensions, any *.vercel.app deployment, and an optional
+# explicit FRONTEND_URL. The UI runs in the user's browser and calls their local backend.
 app.add_middleware(
     CORSMiddleware,
-    # allow the Vite dev server + browser extensions (chrome-extension://...) to reach the API
-    allow_origin_regex=r"^(http://localhost:\d+|http://127\.0\.0\.1:\d+|chrome-extension://.*|moz-extension://.*)$",
+    allow_origins=[settings.frontend_url] if settings.frontend_url else [],
+    allow_origin_regex=(
+        r"^(https?://localhost(:\d+)?|https?://127\.0\.0\.1(:\d+)?"
+        r"|chrome-extension://.*|moz-extension://.*"
+        r"|https://[a-z0-9-]+\.vercel\.app)$"
+    ),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# outermost, so it can add the PNA header onto CORS preflight responses
+app.add_middleware(PrivateNetworkMiddleware)
 
 app.include_router(router)
 

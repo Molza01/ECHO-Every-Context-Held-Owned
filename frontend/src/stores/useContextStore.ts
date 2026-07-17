@@ -8,7 +8,7 @@ import type {
   SurfacedMemory,
   SystemStatus,
 } from "@/types";
-import { api } from "@/services/api";
+import { api, API_BASE } from "@/services/api";
 
 interface RecentItem {
   id: string;
@@ -113,8 +113,11 @@ export const useContextStore = create<ContextState>((set, get) => {
   };
 
   const openSocket = () => {
-    const proto = location.protocol === "https:" ? "wss" : "ws";
-    ws = new WebSocket(`${proto}://${location.host}/ws`);
+    // dev: same-origin via Vite proxy; prod: the backend origin (API_BASE), http->ws
+    const wsUrl = API_BASE
+      ? `${API_BASE.replace(/^http/, "ws")}/ws`
+      : `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws`;
+    ws = new WebSocket(wsUrl);
     ws.onopen = () => set({ wsConnected: true });
     ws.onclose = () => {
       set({ wsConnected: false });

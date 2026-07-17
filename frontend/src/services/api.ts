@@ -13,8 +13,16 @@ import type {
   WatchedLocations,
 } from "@/types";
 
+// Where the ECHO backend lives.
+//  • dev  -> "" : requests are relative and go through the Vite proxy (unchanged)
+//  • prod -> the visitor's OWN local backend at http://localhost:8765, or an explicit
+//            VITE_API_URL (e.g. a tunnel) if you set one at build time on Vercel.
+export const API_BASE = (
+  import.meta.env.VITE_API_URL ?? (import.meta.env.PROD ? "http://localhost:8765" : "")
+).replace(/\/$/, "");
+
 async function req<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(path, {
+  const res = await fetch(`${API_BASE}${path}`, {
     headers: { "Content-Type": "application/json" },
     ...init,
   });
@@ -75,7 +83,7 @@ export const api = {
       body: JSON.stringify(body),
     }),
   passportExportUrl: (format: "markdown" | "json") =>
-    `/api/context/passport/export?format=${format}`,
+    `${API_BASE}/api/context/passport/export?format=${format}`,
   sessionResume: (id: string) => req<SessionResume>(`/api/sessions/${id}/resume`),
   profile: () => req<Profile>("/api/profile"),
   recentActivity: (limit = 30) =>
@@ -129,5 +137,5 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ source, enabled }),
     }),
-  exportUrl: "/api/export",
+  exportUrl: `${API_BASE}/api/export`,
 };
