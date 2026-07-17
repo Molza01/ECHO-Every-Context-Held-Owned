@@ -29,6 +29,7 @@ export interface ActivitySignal {
 
 interface ContextState {
   status: SystemStatus | null;
+  backendUp: boolean | null; // null = not checked yet, false = backend unreachable
   context: ContextEvent | null;
   surfaced: SurfacedMemory[];
   query: string | null;
@@ -137,6 +138,7 @@ export const useContextStore = create<ContextState>((set, get) => {
 
   return {
     status: null,
+    backendUp: null,
     context: null,
     surfaced: [],
     query: null,
@@ -150,9 +152,9 @@ export const useContextStore = create<ContextState>((set, get) => {
     dismissSuggestion: () => set({ suggestion: null }),
     refreshStatus: async () => {
       try {
-        set({ status: await api.status() });
+        set({ status: await api.status(), backendUp: true });
       } catch {
-        set({ status: null });
+        set({ status: null, backendUp: false });
       }
     },
     connect: () => {

@@ -8,9 +8,24 @@
 
 *Your computer creates context all day. ECHO remembers what matters — and carries it to any AI you use.*
 
-`local-first` · `privacy-first` · `powered by Supermemory Local`
+`local-first` · `privacy-first` · `powered by Supermemory`
 
 </div>
+
+---
+
+## 🔗 Live demo
+
+- **App:** https://echo-every-context-held-owned.vercel.app
+- **API:** https://echo-backend-8dwg.onrender.com/api/status
+
+The live link is a **hosted showcase** (Vercel UI → Render backend → Supermemory Cloud) with
+sample data — so you can click and use Ask, Search, Memories, Timeline, Graph, and the Context
+Passport. Automatic activity capture ("ECHO watches what you do") only runs when the backend is
+on **your** machine — see the local setup below. Full options in **[DEPLOYMENT.md](DEPLOYMENT.md)**.
+
+> Note: the hosted backend is on Render's free tier and sleeps when idle — the first click may
+> take ~30s to wake (the UI shows a "Waking up ECHO" panel meanwhile).
 
 ---
 

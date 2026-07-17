@@ -50,9 +50,13 @@ const TABS = Object.keys(CODE);
  */
 export function SupermemoryConnect() {
   const status = useContextStore((s) => s.status);
+  const backendUp = useContextStore((s) => s.backendUp);
   const [tab, setTab] = useState("TypeScript");
-  const offline = status ? status.supermemory.reachable === false : false;
-  if (!offline) return null;
+
+  // Two "not fully connected" cases worth guiding the user through:
+  const backendDown = backendUp === false;                       // can't reach the ECHO backend
+  const memoryOffline = !!status && status.supermemory.reachable === false; // backend up, memory down
+  if (!backendDown && !memoryOffline) return null;
 
   const lines = CODE[tab];
 
@@ -62,14 +66,27 @@ export function SupermemoryConnect() {
         {/* ---------- left: connect copy + code editor ---------- */}
         <div className="border-b border-border p-6 lg:border-b-0 lg:border-r">
           <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-warn/10 px-3 py-1 text-xs font-medium text-warn ring-1 ring-inset ring-warn/20">
-            <span className="h-2 w-2 rounded-full bg-warn" /> Supermemory Local · offline
+            <span className="h-2 w-2 rounded-full bg-warn" />
+            {backendDown ? "ECHO backend · not reachable" : "Supermemory · offline"}
           </div>
-          <h3 className="font-display text-xl font-bold tracking-tight">Connect ECHO to Supermemory</h3>
+          <h3 className="font-display text-xl font-bold tracking-tight">
+            {backendDown ? "Waking up ECHO" : "Connect ECHO to Supermemory"}
+          </h3>
           <p className="mt-1.5 max-w-md text-sm leading-relaxed text-muted">
-            ECHO remembers your work through <span className="text-text">Supermemory Local</span> —
-            a private memory engine on your machine at{" "}
-            <span className="font-mono text-text">localhost:6767</span>. It isn't running yet.
-            Start it and ECHO connects automatically.
+            {backendDown ? (
+              <>
+                ECHO can't reach its backend yet. If this is the hosted demo, the server may be
+                waking up — it retries automatically, give it ~30s. Running it yourself? Start the
+                local backend and it connects.
+              </>
+            ) : (
+              <>
+                ECHO remembers your work through <span className="text-text">Supermemory</span> — a
+                memory engine (local at <span className="font-mono text-text">localhost:6767</span>,
+                or Supermemory Cloud). It isn't connected yet. Start it and ECHO connects
+                automatically.
+              </>
+            )}
           </p>
 
           {/* code editor mockup */}
