@@ -1,0 +1,22 @@
+# Render Blueprint for the ECHO backend (Option B: hosted backend + Supermemory Cloud).
+# In Render: New → Blueprint → pick this repo. Then set the two secret env vars in the
+# dashboard (SUPERMEMORY_API_KEY, and FRONTEND_URL only if you use a custom domain).
+services:
+  - type: web
+    name: echo-backend
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.6"
+      - key: SUPERMEMORY_BASE_URL
+        value: https://api.supermemory.ai
+      - key: SUPERMEMORY_API_KEY
+        sync: false            # set in Render dashboard (secret) — never commit it
+      - key: CONTEXTOS_USER_ID
+        value: hackathon-demo  # fixed id so seeded demo memories match the live backend
+      - key: FRONTEND_URL
+        sync: false            # optional; *.vercel.app is already allowed by CORS
