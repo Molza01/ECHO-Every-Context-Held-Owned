@@ -18,7 +18,6 @@
 
 - **🎥 Platform Overview (video):** https://drive.google.com/file/d/1n0Z0sZVYLxsVn2hf_BOKgev5dXyMlxdL/view?usp=sharing
 - **App:** https://echo-every-context-held-owned.vercel.app
-- **API:** https://echo-backend-8dwg.onrender.com/api/status
 
 The live link is a **hosted showcase** (Vercel UI → Render backend → Supermemory Cloud) with
 sample data — so you can click and use Ask, Search, Memories, Timeline, Graph, and the Context
